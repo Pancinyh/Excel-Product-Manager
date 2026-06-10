@@ -1,6 +1,6 @@
 from openpyxl import load_workbook, Workbook
 from openpyxl.utils.exceptions import InvalidFileException
-from funcoes import menu
+from funcoes import menu, leia
 from rich import print
 from time import sleep
 
@@ -18,7 +18,6 @@ def preencher_produtos(arquivo):
             )
     
     return produtos
-
 
 try:
     print('[yellow]Cole a planilha em exel no formato [bold blue].xlsx [yellow]nesta pasta e coloque seu nome abaixo.[/]')
@@ -106,16 +105,28 @@ else:
                                     )
                     except IndexError:
                         print('[bold red]Erro. Falha ao tentar utilizar uma chave.[/]')
+
+                print(f'Em qual local deseja salvar as modificacões?')
+
+                escolha_save = menu("[1] Nova planilha", "[2] Nesta planilha")
+
+                if escolha_save == 1:
+                    arq2 = Workbook()
+                    plan = arq2.active
+                else:
+                    plan = arq.active
+                    plan.delete_rows(2, plan.max_row)
                 
-                arq2 = Workbook()
-                planilha2 = arq2.active
+                plan.cell(row=1, column=1, value="ID")
+                plan.cell(row=1, column=2, value="Nome")
+                plan.cell(row=1, column=3, value="Valor")
 
                 linha_exel = 2
                 indice = 1
                 for produto in produtos:
-                    planilha2.cell(row=linha_exel, column=1, value=indice)
-                    planilha2.cell(row=linha_exel, column=2, value=produto['nome'])
-                    planilha2.cell(row=linha_exel, column=3, value=produto['valor'])
+                    plan.cell(row=linha_exel, column=1, value=indice)
+                    plan.cell(row=linha_exel, column=2, value=produto['nome'])
+                    plan.cell(row=linha_exel, column=3, value=produto['valor'])
 
                     linha_exel+=1
                     indice+=1
@@ -123,14 +134,18 @@ else:
                 try:
                     print('Tentando salvar nova planilha...')
                     sleep(1)
-                    arq2.save("produtos_new.xlsx")
+                    if escolha_save == 1:
+                        arq2.save("produtos_new.xlsx")
+                        print('<Salvo em nova planilha>')
+
+                    elif escolha_save == 2:
+                        arq.save(np)
 
                 except PermissionError:
                     print('[bold red]Erro. Feche a aba do exel e execute novamente.[/]')
                 
                 else:
-                    print('[bold yellow]Duplicatas e valores Nulos Eliminados.[/]')
-                    print('( Resultado salvo em um nova planilha para a seguranca de seus dados )')
+                    print('[bold yellow]Duplicatas e valores Nulos Eliminados.[/]')    
 
             elif opcao == 3:
                 print('Finalizando programa...')
