@@ -1,4 +1,4 @@
-# Excel Product Manager
+# Excel Product Manager 📊
 ## Sobre o Projeto
 
 O Excel Product Manager é uma aplicação desenvolvida em Python para manipulação e análise de planilhas Excel (.xlsx).
@@ -38,11 +38,11 @@ Instalação
 
 Clone o repositório:
 
-git clone https://github.com/SEU-USUARIO/SEU-REPOSITORIO.git
+git clone https://github.com/Pancinyh/Excel-Product-Manager.git
 
 Acesse a pasta:
 
-cd SEU-REPOSITORIO
+cd Excel-Product-Manager
 
 Instale as dependências:
 
