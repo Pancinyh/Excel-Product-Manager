@@ -3,6 +3,7 @@ from openpyxl.utils.exceptions import InvalidFileException
 from funcoes import menu, leia
 from rich import print
 from time import sleep
+from models import *
 
 def preencher_produtos(arquivo):
     produtos = list()
@@ -72,13 +73,17 @@ else:
                         index+=1
 
                     try:
-                        print('[bold yellow]Tentando salvar planilha...[/]')
-                        arq3.save('produtos_ordenados.xlsx')
-                    except PermissionError:
-                        print('[bold red]Erro. Feche a aba do exel e execute novamente.[/]')
-                    
-                    else:
-                        print('[bold green]PLANILHA CRIADA.[/]')
+                        try:
+                            print('[bold yellow]Tentando salvar planilha...[/]')
+                            arq3.save('produtos_ordenados.xlsx')
+                        except PermissionError as error:
+                            raise ExelOpenError('Close exel window before run this again') from error # nao seria necessario, porem estou treinando este conteudo
+                        
+                        else:
+                            print('[bold green]PLANILHA CRIADA.[/]')
+
+                    except ExelOpenError as error:
+                        print(f'{error.__class__.__name__}: {error}')
                 
                 elif opcao == 3:
                     pass
@@ -104,7 +109,7 @@ else:
                                         }
                                     )
                     except IndexError:
-                        print('[bold red]Erro. Falha ao tentar utilizar uma chave.[/]')
+                        print('[bold red]Erro. Falha ao tentar acessar uma linha ou coluna inexistente.[/]')
 
                 print(f'Em qual local deseja salvar as modificacões?')
 
@@ -130,22 +135,25 @@ else:
 
                     linha_exel+=1
                     indice+=1
-                
+
                 try:
-                    print('Tentando salvar nova planilha...')
-                    sleep(1)
-                    if escolha_save == 1:
-                        arq2.save("produtos_new.xlsx")
-                        print('<Salvo em nova planilha>')
+                    try:
+                        print('Tentando salvar nova planilha...')
+                        sleep(1)
+                        if escolha_save == 1:
+                            arq2.save("produtos_new.xlsx")
+                            print('<Salvo em nova planilha>')
 
-                    elif escolha_save == 2:
-                        arq.save(np)
+                        elif escolha_save == 2:
+                            arq.save(np)
 
-                except PermissionError:
-                    print('[bold red]Erro. Feche a aba do exel e execute novamente.[/]')
-                
-                else:
-                    print('[bold yellow]Duplicatas e valores Nulos Eliminados.[/]')    
+                    except PermissionError as erro:
+                        raise ExelOpenError('Close exel window before run this again') from erro # nao seria necessario, porem estou treinando este conteudo
+                    
+                    else:
+                        print('[bold yellow]Duplicatas e valores Nulos Eliminados.[/]')   
+                except ExelOpenError as erro:
+                    print(f'{erro.__class__.__name__}: {erro}') 
 
             elif opcao == 3:
                 print('Finalizando programa...')
